@@ -1,0 +1,29 @@
+﻿using UnityEngine;
+using System.Collections;
+
+namespace SoulsEngine.Utility
+{
+    public enum ItemType
+    {
+        WEAPON,
+        SHIELD,
+        ARMOR,
+        CONSUMABLE,
+        MISC
+    }
+
+    public enum WeaponType
+    {
+        SWORD,
+        AXE,
+        SPEAR,
+        HAMMER
+    }
+
+    public class ItemUtility
+    {
+
+
+    }
+
+}

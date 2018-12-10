@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - God Manager
+  - Inventory UI
   layers:
   - Default
   - TransparentFX
@@ -13,10 +15,10 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Foreground
+  - Midground
+  - Background
   - 
   - 
   - 
@@ -40,4 +42,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 4209318461
+    locked: 0
+  - name: Midground
+    uniqueID: 2179762583
+    locked: 0
+  - name: Player
+    uniqueID: 909339079
+    locked: 0
+  - name: Characters
+    uniqueID: 1530443455
+    locked: 0
+  - name: Foreground
+    uniqueID: 1141696401
     locked: 0

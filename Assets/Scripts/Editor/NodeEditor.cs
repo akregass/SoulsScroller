@@ -29,7 +29,7 @@ public class NodeEditor : EditorWindow
     private Vector2 offset;
 	private Vector2 drag;
 
-	private bool changesMade;
+    private bool changesMade;
 
     [MenuItem("Souls Engine/Dialog Editor")]
     private static void OpenWindow()
