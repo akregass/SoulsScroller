@@ -13,7 +13,7 @@ public class Consumable : Item
 
     public void Consume(Actor __actor, Inventory __inventory, int __id){
 		for(int i=0; i < effects.Count; i++){
-			__actor.CurrentStatusEffects.Add(effects[i]);
+			//__actor.CurrentStatusEffects.Add(effects[i]);
 		}
 
 		if(__inventory.inventoryCount[__id] > 1){

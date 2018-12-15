@@ -5,17 +5,17 @@ public abstract class Interactable : MonoBehaviour
 {
     public float interactionDistance;
     public Transform interactionTransform;
-    private Transform playerTransform;
+    Transform playerTransform;
 
     public string interactionText;
 
-    private void Start()
+    public virtual void Start()
     {
         interactionTransform = GetComponent<Transform>();
-        playerTransform = GameObject.FindGameObjectWithTag("God Manager").GetComponent<GodManager>().Player.transform;
+        playerTransform = GodManager.Player.transform;
     }
 
-    void Update ()
+    public virtual void Update ()
     {
         if(Vector2.Distance(playerTransform.position, interactionTransform.position) <= interactionDistance)
         {

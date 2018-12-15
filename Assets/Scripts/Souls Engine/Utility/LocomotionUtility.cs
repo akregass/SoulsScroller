@@ -51,17 +51,25 @@ namespace SoulsEngine.Utility.Locomotion
     public class LocomotionUtility
     {
 
-        static List<CoroutineHandle> handles = new List<CoroutineHandle>();
-
-        public static void SmoothMovement(Vector3 transform, Vector3 velocity)
+        public static void MoveSmooth(Transform body, Vector3 velocity, float time)
         {
-            var h = Timing.RunCoroutine(Move(velocity));
-            handles.Add(h);
+            Timing.RunCoroutine(_MoveSmooth(body, velocity, time), body.gameObject.name);
         }
 
-        static IEnumerator<float> Move(Vector3 velocity)
+        static IEnumerator<float> _MoveSmooth(Transform body, Vector3 velocity, float time)
         {
-            yield return 0f;
+            Vector3 distanceTotal = velocity; // 10
+            Vector3 distanceCovered = new Vector3(0,0);
+            float finalTime = time / Time.fixedDeltaTime; // 500 = 5 / .01 total frames
+            Vector3 finalVelocity = distanceTotal / finalTime; // .1 = 10 / 500 total distance covered every frame
+
+            while(distanceCovered.x < distanceTotal.x || distanceCovered.y < distanceTotal.y)
+            {
+                body.position += finalVelocity;
+                yield return Timing.WaitForSeconds(Time.fixedDeltaTime);
+            }
+
+            Timing.KillCoroutines(body.gameObject.name);
         }
 
     }

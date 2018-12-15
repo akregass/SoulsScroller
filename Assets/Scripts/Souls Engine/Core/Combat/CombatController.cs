@@ -40,7 +40,7 @@ public class CombatController
                     //damage modifier code goes here
 
                     _attackChainCount = 0;
-                    Actor.ActorState = ActorState.IDLE;
+                    Actor.AnimManager.SetState(ActorState.IDLE);
 
                     break;
 
@@ -50,13 +50,6 @@ public class CombatController
         }
     }
 
-    private bool _shieldRaised;
-    public bool ShieldRaised
-    {
-        get { return _shieldRaised; }
-        set { _shieldRaised = value; }
-    }
-
     public CombatController(Actor a)
     {
         Actor = a;
@@ -64,16 +57,8 @@ public class CombatController
 
     public void Attack()
     {
-        if (Actor.ActorState == ActorState.ATTACKING)
-        {
-            Actor.ActorState = ActorState.ATTACKING;
-            AttackChainCount++;
-        }
-    }
-
-    public void Parry()
-    {
-
+        if (Actor.AnimManager.State != ActorState.ATTACKING)
+            Actor.AnimManager.SetState(ActorState.ATTACKING);
     }
 
     float CalculateDamage()

@@ -63,12 +63,12 @@ public class CameraManager : MonoBehaviour
 
     bool CheckBoundsX(ref float target)
     {
-        if((target - minPos.x) < -.25f)
+        if((target - minPos.x) < -2.5f)
         {
             target = Mathf.Lerp(target, minPos.x, xSmooth * Time.deltaTime);
             return true;
         }
-        else if ((target - maxPos.x) > .25f)
+        else if ((target - maxPos.x) > 2.5f)
         {
             target = Mathf.Lerp(target, maxPos.x, xSmooth * Time.deltaTime);
             return true;
@@ -79,12 +79,12 @@ public class CameraManager : MonoBehaviour
 
     bool CheckBoundsY(ref float target)
     {
-        if ((target - minPos.y) < -1f)
+        if ((target - minPos.y) < -2.5f)
         {
             target = Mathf.Lerp(target, minPos.y, ySmooth * Time.deltaTime);
             return true;
         }
-        else if ((target - maxPos.y) > 1f)
+        else if ((target - maxPos.y) > 2.5f)
         {
             target = Mathf.Lerp(target, maxPos.y, ySmooth * Time.deltaTime);
             return true;
@@ -101,21 +101,17 @@ public class CameraManager : MonoBehaviour
         if (!CheckBoundsX(ref targetX))
         {
             if (CheckFollowMarginX())
-            {
                 targetX = Mathf.Lerp(transform.position.x, Mathf.Clamp(followObject.position.x, minPos.x, maxPos.x), xSmooth * Time.deltaTime);
-                //targetX = Mathf.Clamp(targetX, minPos.x, maxPos.x);
-            }
         }
 
         if(!CheckBoundsY(ref targetY))
         {
             if (CheckFollowMarginY())
-            {
                 targetY = Mathf.Lerp(transform.position.y, Mathf.Clamp(followObject.position.y, minPos.y, maxPos.y), ySmooth * Time.deltaTime);
-                //targetY = Mathf.Clamp(targetY, minPos.y, maxPos.y);
-            }
         }
         
-        transform.position = new Vector3(targetX, targetY, transform.position.z);
+        Vector2 final = Utility.SnapToPixelGrid(new Vector2(targetX, targetY));
+
+        transform.position = new Vector3(final.x, final.y, transform.position.z);
     }
 }

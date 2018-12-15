@@ -1,124 +1,75 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using SoulsEngine;
-using SoulsEngine.Utility.Animation;
 using SoulsEngine.Utility.Combat;
+using MEC;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Controller))]
 [RequireComponent(typeof(Collider2D))]
 public class Actor : MonoBehaviour
 {
-    public Vector2 input;
 
-    private int _id;
-    public int Id
-    {
-        get { return _id; }
-        set { _id = value; }
-    }
-    protected GodManager godManager;
+    public int ID { get; set; }
 
-    [SerializeField]
-    private AnimationManager _animManager;
-    public AnimationManager AnimManager
-    {
-        get { return _animManager; }
-        set { _animManager = value; }
-    }
-
-    private CombatController _combatController;
-    public CombatController CombatController
-    {
-        get { return _combatController; }
-        set { _combatController = value; }
-    }
-    
-    [SerializeField]
-    private Inventory _inventory;
-    public Inventory Inventory
-    {
-        get { return _inventory; }
-        set { _inventory = value; }
-    }
+    public AnimationManager AnimManager { get; set; }
+    public CombatController CombatController { get; set; }
 
     [SerializeField]
     private Stats _stats;
     public Stats Stats
     {
         get { return _stats; }
-        set { _stats = value; }
+        set { _stats = Stats; }
     }
 
-    [SerializeField]
-    private List<StatusEffect> _currentStatusEffects = new List<StatusEffect>();
-    public List<StatusEffect> CurrentStatusEffects
-    {
-        get { return _currentStatusEffects; }
-        set { _currentStatusEffects = value; }
-    }
+    protected Controller Controller { get; set; }
 
-    public ActorState ActorState { get; set; }
-
-    public bool hasControl;
-
-    [SerializeField]
     public bool Invincible { get; set; }
+    public bool hasControl;
+    public Vector2 input;
 
-    protected Controller controller;
 
     #region INITIALIZATION
 
-    protected void Awake () 
+    protected void Awake()
     {
-        Inventory = GetComponent<Inventory>();
-        Stats = _stats;
+        Stats = new Stats();
         CombatController = new CombatController(this);
-        controller = GetComponent<Controller>();
-        AnimManager = new AnimationManager
-        {
-            animator = GetComponent<Animator>(),
-            animInt = new Dictionary<string, int>(),
-            animFloat = new Dictionary<string, float>(),
-            animBool = new Dictionary<string, bool>()
-        };
+        Controller = GetComponent<Controller>();
+    }
 
-        godManager = GameObject.FindGameObjectWithTag ("God Manager").GetComponent<GodManager>();
-        godManager.actors.Add(this);
-	}
-
-	protected void Start()
+    protected void Start()
     {
-        SubscribeActor();
-	}
+        GodManager.RegisterActor(this);
+    }
 
     protected void OnEnable()
     {
-        SubscribeActor();
+        GodManager.SubscribeActor(this);
     }
 
     protected void OnDisable()
     {
-        UnsubscribeActor();
+        GodManager.UnsubscribeActor(this);
     }
 
-    void SubscribeActor()
+    protected void OnDestroy()
     {
-        godManager.actorsActive.Add(this);
-    }
-    
-    void UnsubscribeActor()
-    {
-        godManager.actorsActive.Remove(this);
+        GodManager.UnregisterActor(this);
     }
 
     #endregion
 
-    public void SetActorState(ActorState s)
+    public virtual void Death()
     {
-        AnimManager.AnimatorState = (int)s;
-        AnimManager.UpdateInt("state", AnimManager.AnimatorState);
-        AnimManager.UpdateAnimator();
+        Timing.RunCoroutine(_Death());
+    }
+
+    public IEnumerator<float> _Death()
+    {
+        yield return Timing.WaitForSeconds(1f);
+        Destroy(gameObject);
     }
 
 }

@@ -7,6 +7,8 @@ namespace SoulsEngine.Utility
 {
     public class Utility
     {
+        public const float PixelUnit = 1 / 16f;
+
         public static T GetComponentInChildren<T>(GameObject __gameObject)where T:Component
         {
             var array = __gameObject.GetComponentsInChildren<T>();
@@ -36,6 +38,14 @@ namespace SoulsEngine.Utility
             }
 
             return list ?? null;
+        }
+
+        public static Vector2 SnapToPixelGrid(Vector2 pos)
+        {
+            float x = Mathf.Round(pos.x / PixelUnit) * PixelUnit;
+            float y = Mathf.Round(pos.y / PixelUnit) * PixelUnit;
+
+            return new Vector2(x, y);
         }
     }
 

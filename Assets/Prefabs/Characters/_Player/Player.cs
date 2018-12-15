@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using SoulsEngine;
 
 public class Player : Actor
 {
@@ -8,14 +9,8 @@ public class Player : Actor
     new void Start ()
     {
         base.Start();
-        
-		AnimManager.animInt.Add ("state", 0);
-		AnimManager.animFloat.Add ("dir", 0f);
-        AnimManager.animFloat.Add("locomotionModifier", 0f);
 
-        godManager.Player = this;
-
-        Inventory.isPlayer = true;
+        GodManager.Player = this;
 	}
 
     private void Update()
@@ -23,32 +18,41 @@ public class Player : Actor
         //input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
         input = Vector2.zero;
-        if (Input.GetKey(KeyCode.A))
-            input.x = -1;
-        if (Input.GetKey(KeyCode.D))
-            input.x = 1;
+
+        if (Input.GetKeyDown(KeyCode.R))
+            SceneManager.LoadScene(0, LoadSceneMode.Single);
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
 
         if (hasControl)
         {
+            if (Input.GetKey(KeyCode.A))
+                input.x = -1;
+
+            if (Input.GetKey(KeyCode.D))
+                input.x = 1;
+
             if (Input.GetKeyDown(KeyCode.Space))
-                controller.Jump(input);
+                Controller.Jump(input);
 
             if (Input.GetKeyDown(KeyCode.LeftAlt))
-                controller.Dash();
-
-            //controller.Move(input * Time.deltaTime);
+                Controller.Dash();
         }
     }
 
     private void FixedUpdate()
     {
-
         if (hasControl)
         {
-            controller.Move(input * Time.deltaTime);
+            Controller.Move(input * Time.deltaTime);
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.R))
-            SceneManager.LoadScene(0, LoadSceneMode.Single);
+    public override void Death()
+    {
+        GodManager.DeathSplash();
+
+        base.Death();
     }
 }

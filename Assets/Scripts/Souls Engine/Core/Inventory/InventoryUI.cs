@@ -11,8 +11,8 @@ public class InventoryUI : MonoBehaviour
 
     private void Start()
     {
-        inventory = GameObject.FindGameObjectWithTag("God Manager").GetComponent<GodManager>().Player.Inventory;
-        inventory.inventoryChangeCallback += UpdateUI;
+        //inventory = GodManager.Player.Inventory;
+        inventory.OnInventoryChange += UpdateUI;
 
         var c = parent.GetComponentsInChildren<Button>();
 

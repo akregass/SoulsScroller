@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using SoulsEngine.Utility.Locomotion;
 using SoulsEngine.Utility;
-using MEC;
+using SoulsEngine.Utility.Locomotion;
+using SoulsEngine.Utility.Animation;
 
 public class Controller : RaycastController
 {
@@ -219,6 +219,10 @@ public class Controller : RaycastController
 
         if (velocity.y != 0)
             VerticalCollision(ref velocity);
+
+        
+
+
         
         transform.Translate(velocity);
     }
@@ -244,6 +248,7 @@ public class Controller : RaycastController
         {
             velocity.y = jumpVelocity;
             isJumping = true;
+            //LocomotionUtility.MoveSmooth(transform, new Vector2(0, jumpVelocity), timeToJumpApex);
 
             if (jumpGraceActive)
             {
@@ -328,7 +333,24 @@ public class Controller : RaycastController
     {
         yield return 0f;
     }
+
+    void UpdateAnimator()
+    {
+        if (isJumping)
+        {
+            actor.AnimManager.SetState(ActorState.JUMPING);
+        }
+        else if (isDashing)
+        {
+            actor.AnimManager.SetState(ActorState.DASHING);
+        }
+        else if(Mathf.Abs(velocity.x) > 0)
+        {
+            actor.AnimManager.SetState(ActorState.RUNNING);
+        }
+    }
     
+    [System.Serializable]
     public struct CollisionInfo
     {
         public bool above, below;

@@ -30,11 +30,7 @@ public class DialogManager : MonoBehaviour {
 	public bool scrollingText;
 	public string[] buttonTextures;
 
-	private GodManager godManager;
-
 	void Start () {
-		godManager = GetComponent<GodManager> ();
-
 		boxW = Screen.width;
 		boxH = 60;
 		optH = skin.GetStyle ("Middle Button").normal.background.height;
@@ -44,12 +40,11 @@ public class DialogManager : MonoBehaviour {
 
 	void OnGUI (){
 		if (isActive) {
-			foreach (DialogCheck dC in godManager.QuestManager.dialogChecks) {
+			foreach (DialogCheck dC in QuestManager.dialogChecks) {
 				if (!dC.completed) {
-					if (dC.actorId == currentActor.Id) {
-						if (dC.node == currentNode) {
+					if (dC.actorId == currentActor.ID) {
+						if (dC.node == currentNode)
 							dC.completed = true;
-						}
 					}
 				}
 			}
@@ -57,9 +52,9 @@ public class DialogManager : MonoBehaviour {
 			if(t > 6f){
 				t = 0f;
 				SetText();
-			}else{
-				t += Time.deltaTime;
 			}
+            else
+				t += Time.deltaTime;
 
 			if(Input.GetKeyDown(KeyCode.Escape)){
 				t = 3.6f;
@@ -109,7 +104,7 @@ public class DialogManager : MonoBehaviour {
 		}else{
 			isActive = false;
 			showOptions = false;
-			godManager.Player.hasControl = true;
+			GodManager.Player.hasControl = true;
 		}
 	}
 
@@ -122,7 +117,7 @@ public class DialogManager : MonoBehaviour {
 	}
 
 	public void StartDialog (Actor actor, int id, int node){
-		godManager.Player.hasControl = false;
+		GodManager.Player.hasControl = false;
 		currentActor = actor;
 		SetDialog (id, node);
 		isActive = true;
@@ -133,18 +128,18 @@ public class DialogManager : MonoBehaviour {
 
 		if(option.questRef != null && option.questRef != "-1"){
 			Debug.Log (option.questRef);
-			QuestManager.StartQuest(godManager.QuestManager.questList[Int32.Parse (option.questRef)]);
+			QuestManager.StartQuest(QuestManager.questList[Int32.Parse (option.questRef)]);
 		}
 
 		if(option.incomingItems.Count > 0){
 			foreach(KeyValuePair<int, int> item in option.incomingItems){
-				godManager.Player.Inventory.AddItem (item.Key, item.Value);
+				//GodManager.Player.Inventory.AddItem (item.Key, item.Value);
 			}
 		}
 
 		if(option.outgoingItems.Count > 0){
 			foreach(KeyValuePair<int, int> item in option.outgoingItems){
-				godManager.Player.Inventory.RemoveItem (item.Key, item.Value);
+				//GodManager.Player.Inventory.RemoveItem (item.Key, item.Value);
 			}
 		}
 	}

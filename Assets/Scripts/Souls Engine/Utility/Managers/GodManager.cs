@@ -8,36 +8,30 @@ namespace SoulsEngine {
 
     public class GodManager : MonoBehaviour
     {
-        public Player _player;
-        public Player Player
+        public static GodManager godManager;
+
+        private static Player _player;
+        public static Player Player
         {
             get { return _player; }
             set { _player = value; }
         }
 
-        private DialogManager _dialogManager;
-        public DialogManager DialogManager
+        private static DialogManager _dialogManager;
+        public static DialogManager DialogManager
         {
             get { return _dialogManager; }
             set { _dialogManager = value; }
         }
 
-        private QuestManager _questManager;
-        public QuestManager QuestManager
-        {
-            get { return _questManager; }
-            set { _questManager = value; }
-        }
+        public static Camera[] cameras;
 
-        public Camera[] cameras;
+        public static List<Actor> actors;
+        public static List<Actor> actorsActive;
 
-        public List<Actor> actors;
-        public List<Actor> actorsActive;
+        public static List<Entity> entities;
 
-        public List<Entity> entities;
-
-        public ItemDatabase ItemDB { get; set; }
-        public GameObject inventoryUI;
+        public static ItemDatabase ItemDB { get; set; }
 
         void Awake()
         {
@@ -46,14 +40,43 @@ namespace SoulsEngine {
             actorsActive = new List<Actor>();
 
             DialogManager = GetComponent<DialogManager>();
-            QuestManager = GetComponent<QuestManager>();
-
-            //inventoryUI = GameObject.FindGameObjectWithTag("Inventory UI");
         }
 
         public static void DeathSplash()
         {
             Debug.Log("YOU DIED");
+        }
+
+        public static void RegisterActor(Actor actor)
+        {
+            if (!actors.Contains(actor))
+            {
+                actors.Add(actor);
+            }
+        }
+
+        public static void UnregisterActor(Actor actor)
+        {
+            if (actors.Contains(actor))
+            {
+                actors.Remove(actor);
+            }
+        }
+        
+        public static void SubscribeActor(Actor actor)
+        {
+            if (!actorsActive.Contains(actor))
+            {
+                actorsActive.Add(actor);
+            }
+        }
+
+        public static void UnsubscribeActor(Actor actor)
+        {
+            if (actorsActive.Contains(actor))
+            {
+                actorsActive.Remove(actor);
+            }
         }
 
         #region SCENE MANAGEMENT

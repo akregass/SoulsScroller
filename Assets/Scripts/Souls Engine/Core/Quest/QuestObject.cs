@@ -5,14 +5,12 @@ using SoulsEngine;
 
 public class QuestObject : MonoBehaviour
 {
-
-	public QuestManager questManager;
 	public List<Quest> outgoingQuests;
 
 	private Quest.Stage qS;
 
-	void Start(){
-		questManager = GameObject.FindGameObjectWithTag("God Manager").GetComponent<GodManager>().QuestManager;
+	void Start()
+    {
 
 		List<Quest.Stage> s = new List<Quest.Stage>();
 
@@ -108,7 +106,7 @@ public class QuestObject : MonoBehaviour
 
 		Quest q = new Quest("Amalexia's Fall", 0, Quest.QuestProgress.NotEligible, 1, 0, "Help clear Amalexia's name after she was accused of murder", 6, 7, "Help clear Amalexia's name after she was accused of murder", -1, s);
 
-		questManager.questList.Add(q);
+		QuestManager.questList.Add(q);
 		outgoingQuests.Add (q);
 	}
 

@@ -6,24 +6,23 @@ using SoulsEngine;
 [System.Serializable]
 public class QuestManager : MonoBehaviour
 {
-	public List<Quest> questList;
-	public List<Quest> activeQuestList;
-	public List<DialogCheck> dialogChecks;
+    public static QuestManager questManager;
 
-	public List<QuestMarker> questMarkers;
+	public static List<Quest> questList;
+    public static List<Quest> activeQuestList;
+    public static List<DialogCheck> dialogChecks;
 
-	public bool isActive;
+    public static List<QuestMarker> questMarkers;
 
-	private static GodManager godManager;
+    public static bool isActive;
 
-	public Quest.Stage qS;
+    public static Quest.Stage qS;
 
-	private Quest activeJournalQuest;
-	public GUISkin skin;
+	private static Quest activeJournalQuest;
+    public static GUISkin skin;
 
 	public void Start()
     {
-		godManager = GetComponent<GodManager> ();
 		dialogChecks = new List<DialogCheck> ();
 		questMarkers = new List<QuestMarker> ();
 	}
@@ -37,7 +36,7 @@ public class QuestManager : MonoBehaviour
         {
 			activeJournalQuest = null;
 			isActive = !isActive;
-            godManager.Player.Inventory.ToggleInventory();
+            //GodManager.Player.Inventory.ToggleInventory();
 		}
 	}
 
@@ -59,11 +58,11 @@ public class QuestManager : MonoBehaviour
 	public static void StartQuest(Quest quest)
     {
 		quest.questProgress = Quest.QuestProgress.Accepted;
-		godManager.QuestManager.qS = quest.questStages[0];
-		godManager.QuestManager.qS.stageProgress = Quest.StageProgress.Started;
-		quest.questStages[0] = godManager.QuestManager.qS;
+        qS = quest.questStages[0];
+        qS.stageProgress = Quest.StageProgress.Started;
+		quest.questStages[0] = qS;
 
-		godManager.QuestManager.activeQuestList.Add(quest);
+        activeQuestList.Add(quest);
 	}
 
 	public void CompleteObjective(Quest quest, int objectiveId)
@@ -150,14 +149,14 @@ public class QuestManager : MonoBehaviour
 
 				case QuestObjective.Type.COLLECTION:
 
-					if (godManager.Player.GetComponent<Inventory> ().CountOf ((int)qO.target) >= qO.targetNum)
+					if (GodManager.Player.GetComponent<Inventory> ().CountOf ((int)qO.target) >= qO.targetNum)
 						CompleteObjective (q, i);
 
 					break;
 
 				case QuestObjective.Type.DIALOG:
 
-					if (godManager.DialogManager.isActive)
+					if (GodManager.DialogManager.isActive)
                         {
 						foreach (DialogCheck dC in dialogChecks)
                             {
@@ -205,7 +204,7 @@ public class QuestManager : MonoBehaviour
 	void UpdateDialogChecks()
     {
 		dialogChecks.Clear ();
-		foreach(Quest q in godManager.QuestManager.activeQuestList)
+		foreach(Quest q in activeQuestList)
         {
 			foreach(Quest.Stage qS in q.questStages)
             {

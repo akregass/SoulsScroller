@@ -14,8 +14,7 @@ public class DialogController : MonoBehaviour {
 
 	protected int overrideDialog;
 	protected int defaultDialog;
-
-	protected GodManager godManager;
+    
 	protected Actor actor;
 	protected int zoneLastCheck;
 
@@ -26,8 +25,6 @@ public class DialogController : MonoBehaviour {
 
 		overrideDialog = -1;
 		defaultDialog = 0;
-
-		godManager = GameObject.FindGameObjectWithTag("God Manager").GetComponent<GodManager>();
 
 		actor = GetComponent<Actor> ();
 
@@ -51,20 +48,20 @@ public class DialogController : MonoBehaviour {
 			overrideDialog = flaggedNode [flagR [true]];
 		}
 
-		if (Vector3.Distance (gameObject.transform.position, godManager.Player.transform.position) < 5) {
-			godManager.DialogManager.dialogList = dialogCollection;
+		if (Vector3.Distance (gameObject.transform.position, GodManager.Player.transform.position) < 5) {
+			GodManager.DialogManager.dialogList = dialogCollection;
 
-			if (Input.GetKeyDown (KeyCode.E) && !godManager.DialogManager.isActive) {
+			if (Input.GetKeyDown (KeyCode.E) && !GodManager.DialogManager.isActive) {
 				if (flags.ContainsKey ("first time")) {
 					if (flags ["first time"] == true) {
 						flags ["first time"] = false;
 						Debug.Log ("first time");
-						godManager.DialogManager.StartDialog (actor ,flaggedNode["first time"],0);
+						GodManager.DialogManager.StartDialog (actor ,flaggedNode["first time"],0);
 					}else{
-						godManager.DialogManager.StartDialog (actor, (overrideDialog > 0) ? overrideDialog : defaultDialog, 0);
+						GodManager.DialogManager.StartDialog (actor, (overrideDialog > 0) ? overrideDialog : defaultDialog, 0);
 					}
 				} else {
-					godManager.DialogManager.StartDialog (actor, (overrideDialog > 0) ? overrideDialog : defaultDialog, 0);
+					GodManager.DialogManager.StartDialog (actor, (overrideDialog > 0) ? overrideDialog : defaultDialog, 0);
 				}
 			}
 		}
@@ -72,10 +69,10 @@ public class DialogController : MonoBehaviour {
 		overrideDialog = -1;
 	}
 
-	protected void StoreKeys(){
-		foreach (string key in flags.Keys){
+	protected void StoreKeys()
+    {
+		foreach (string key in flags.Keys)
 			flagR.Add (flags[key], key);
-		}
 	}
 
 }
