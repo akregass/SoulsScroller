@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using SoulsEngine.Core;
 using SoulsEngine.Utility;
+using SoulsEngine.Utility.Combat;
 
 public class DatabaseEditor : EditorWindow
 {

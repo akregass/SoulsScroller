@@ -74,10 +74,23 @@ namespace SoulsEngine.Utility
             this.message = message;
         }
 
-        public void Activate()
+        public CoroutineHandle Activate()
         {
-            handle = Timing.RunCoroutine(Count());
-            Active = true;
+            if (!Active)
+            {
+                handle = Timing.RunCoroutine(Run());
+                Active = true;
+                return handle;
+            }
+            else
+                return Refresh();
+        }
+
+        public CoroutineHandle Refresh()
+        {
+            Timing.KillCoroutines(handle);
+            handle = Timing.RunCoroutine(Run());
+            return handle;
         }
 
         public void Deactivate()
@@ -86,7 +99,7 @@ namespace SoulsEngine.Utility
             Active = false;
         }
 
-        public IEnumerator<float> Count ()
+        public IEnumerator<float> Run ()
         {
             yield return Timing.WaitForSeconds(time);
 
@@ -96,4 +109,5 @@ namespace SoulsEngine.Utility
                 Debug.Log(message);
         }
     }
+    
 }

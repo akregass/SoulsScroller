@@ -7,19 +7,19 @@ using SoulsEngine.Utility.Animation;
 public class Controller : RaycastController
 {
     Actor actor;
+    SpriteRenderer sprite;
 
     [Header("Collision"), Space(5f)]
     public LayerMask collisionMask;
-    [SerializeField]
-    public CollisionInfo collisions;
+    CollisionInfo collisions;
 
-    [Space(10f), Header("Movement values"), Space(5f)]
+    [Space(10f), Header("Movement values"), Space(5f), HideInInspector]
     public Vector3 velocity;
-    Vector3 velocityLastFrame;
     float velocityXSmoothing;
     float accelerationTimeGrounded = .1f;
     float accelerationTimeAirborne = .05f;
-    
+
+    #region JUMPING VARS
     [Space(10f), Header("Jumping"), Space(5f), SerializeField]
     float jumpHeight;
     [SerializeField]
@@ -27,26 +27,29 @@ public class Controller : RaycastController
     float gravity;
     float jumpVelocity;
     bool jumpGraceAble = true;
-    public bool jumpGraceActive = false;
+    bool jumpGraceActive = false;
     [SerializeField]
     float jumpGracePeriod;
     Timer jumpGraceTimer;
     [SerializeField]
     float jumpGraceCooldown;
     Timer jumpGraceCooldownTimer;
-    public bool isJumping;
-    public bool isFallingFromJump;
-    public bool isFalling;
+    bool isJumping;
+    bool isFallingFromJump;
+    bool isFalling;
     
-    public bool isWallSliding;
+    bool isWallSliding;
     public float wallSlideSpeed;
     public Vector2 wallJumpSpeed;
     public Vector2 wallClimbSpeed;
     public Vector2 wallJumpOffSpeed;
 
     float wallStickTime = .25f;
-    public float timeToWallUnstick;
+    float timeToWallUnstick;
 
+    #endregion
+
+    #region DASHING VARS
     [Space(10f), Header("Dashing"), Space(5f), SerializeField]
     float dashDistance;
     [SerializeField]
@@ -56,17 +59,18 @@ public class Controller : RaycastController
     float dashCooldown;
     Timer dashCooldownTimer;
     bool canDash = true;
-    public bool isDashing;
+    bool isDashing;
+
+    #endregion
 
     [Space(10f), Header("Misc"), Space(5f)]
     public int direction = 1;
-
-    public float LocomotionModifier { get; set; }
 
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
         actor = GetComponent<Actor>();
+        sprite = GetComponent<SpriteRenderer>();
         CalculateRaySpacing();
 
         #region TIMERS
@@ -87,9 +91,11 @@ public class Controller : RaycastController
 
     private void Update()
     {
-        if (Mathf.Sign(gameObject.transform.localScale.x) != direction)
-            gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x * -1, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
-        
+        if (Mathf.Sign(transform.localScale.x) != direction)
+            transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+
+        sprite.flipX = (!isWallSliding);
+
         if (collisions.below)
         {
             if (isFalling)
@@ -118,20 +124,20 @@ public class Controller : RaycastController
         }
     }
 
-    public void Move(Vector3 input)
+    public void Move(Vector2 input)
     {
-        float targetVelocityX = input.x * actor.Stats.MoveSpeed;
+        float targetVelocityX = input.x * actor.CombatController.Stats.MoveSpeed;
         int wallDirection = collisions.right ? 1 : -1;
 
-        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
+        //velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
+        velocity.x = targetVelocityX;
 
         if ((collisions.left || collisions.right) && !collisions.below)
         {
             isWallSliding = true;
+
             if (velocity.y < 0)
             {
-
-                //isWallSliding = true;
                 isJumping = false;
                 isFalling = false;
                 isFallingFromJump = false;
@@ -163,6 +169,8 @@ public class Controller : RaycastController
                     DeactivateJumpGrace();
                     jumpGraceTimer.Deactivate();
                 }
+
+
             }
         }
 
@@ -193,8 +201,8 @@ public class Controller : RaycastController
                 dashDistanceCovered = 0;
             }
         }
-
-        if(Mathf.Abs(velocity.x) > .01f)
+        
+        if (Mathf.Abs(velocity.x) > .01f)
             direction = (int)Mathf.Sign(velocity.x);
 
         if (velocity.y < -.1f && jumpGraceAble && !jumpGraceActive && !isFallingFromJump)
@@ -220,10 +228,8 @@ public class Controller : RaycastController
         if (velocity.y != 0)
             VerticalCollision(ref velocity);
 
-        
+        UpdateAnimator();
 
-
-        
         transform.Translate(velocity);
     }
 
@@ -248,7 +254,6 @@ public class Controller : RaycastController
         {
             velocity.y = jumpVelocity;
             isJumping = true;
-            //LocomotionUtility.MoveSmooth(transform, new Vector2(0, jumpVelocity), timeToJumpApex);
 
             if (jumpGraceActive)
             {
@@ -329,25 +334,15 @@ public class Controller : RaycastController
         }
     }
 
-    IEnumerator<float> SmoothMove()
-    {
-        yield return 0f;
-    }
-
     void UpdateAnimator()
     {
-        if (isJumping)
-        {
-            actor.AnimManager.SetState(ActorState.JUMPING);
-        }
-        else if (isDashing)
-        {
-            actor.AnimManager.SetState(ActorState.DASHING);
-        }
-        else if(Mathf.Abs(velocity.x) > 0)
-        {
+        actor.AnimManager.SetState(ActorState.IDLE);
+
+        if (Mathf.Abs(velocity.x) > .05)
             actor.AnimManager.SetState(ActorState.RUNNING);
-        }
+
+        if (!collisions.below)
+            actor.AnimManager.SetState(ActorState.JUMPING);
     }
     
     [System.Serializable]

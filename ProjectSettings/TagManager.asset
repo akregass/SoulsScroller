@@ -6,6 +6,7 @@ TagManager:
   tags:
   - God Manager
   - Inventory UI
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -19,8 +20,8 @@ TagManager:
   - Foreground
   - Midground
   - Background
-  - 
-  - 
+  - Obstacles
+  - Enemies
   - 
   - 
   - 

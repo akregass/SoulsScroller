@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using SoulsEngine.Utility;
+using SoulsEngine.Utility.Combat;
 
 namespace SoulsEngine.Core.Combat {
-    [System.Serializable]
+    [Serializable]
     public class Weapon : Item
     {
-
+        [SerializeField]
         private float _damage;
         public float Damage
         {
@@ -13,6 +15,7 @@ namespace SoulsEngine.Core.Combat {
             set { _damage = Mathf.Clamp(value, 0, System.Int32.MaxValue); }
         }
 
+        [SerializeField]
         private int _durability;
         public int Durability
         {
@@ -20,7 +23,13 @@ namespace SoulsEngine.Core.Combat {
             set { _durability = Mathf.Clamp(value, 0, System.Int32.MaxValue); }
         }
 
+        [SerializeField]
         public WeaponType WeaponType { get; set; }
+
+        public Weapon()
+        {
+
+        }
 
         public Weapon(float __damage, int __durability, WeaponType _weaponType)
         {
@@ -29,10 +38,27 @@ namespace SoulsEngine.Core.Combat {
             Damage = __damage;
             Durability = __durability;
         }
+        
+        public event Action<Actor> OnWeaponHit;
 
-        public Weapon(string name, string description, ItemType type, int stackSize, int id) : base(name, description, type, stackSize, id)
+        Actor actor;
+
+        private void Start()
         {
-
+            actor = transform.parent.gameObject.GetComponent<Actor>();
         }
+
+        private void OnTriggerEnter2D(Collider2D c)
+        {
+            //actor.Controller.velocity = Vector2.zero;
+
+            var a = c.gameObject.GetComponent<Actor>();
+            if (a != null)
+            {
+                if (OnWeaponHit != null)
+                    OnWeaponHit(a);
+            }
+        }
+
     }
 }

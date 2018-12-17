@@ -1,87 +1,153 @@
-﻿using SoulsEngine.Utility.Combat;
+﻿using System;
+using UnityEngine;
+using SoulsEngine.Core.Combat;
+using SoulsEngine.Utility;
+using SoulsEngine.Utility.Combat;
 using SoulsEngine.Utility.Animation;
 
-public class CombatController
+public class CombatController : MonoBehaviour
 {
-
     public Actor Actor { get; set; }
-    public Stats Stats { get; set; }
 
+    [SerializeField]
+    private Stats stats;
+    public Stats Stats
+    {
+        get { return stats; }
+        set { stats = value; }
+    }
+
+    [SerializeField]
     private Equipment _equipment;
     public Equipment Equipment
     {
         get { return _equipment; }
         set { _equipment = value; }
     }
-    
-    private int _attackChainCount;
-    public int AttackChainCount
+
+    [SerializeField]
+    private bool inCombat;
+    public bool InCombat
     {
-        get { return _attackChainCount; }
+        get { return inCombat; }
         set
         {
-            _attackChainCount = value;
-            switch (_attackChainCount)
-            {
-                case 1:
+            inCombat = value;
 
-                    //damage modifier code goes here
-
-                    break;
-
-                case 2:
-
-                    //damage modifier code goes here
-
-                    break;
-
-                case 3:
-
-                    //damage modifier code goes here
-
-                    _attackChainCount = 0;
-                    Actor.AnimManager.SetState(ActorState.IDLE);
-
-                    break;
-
-                default:
-                    break;
-            }
+            if (OnCombatStateChange != null)
+                OnCombatStateChange();
         }
     }
 
-    public CombatController(Actor a)
+    [SerializeField]
+    bool doneAttacking;
+    public bool DoneAttacking { get { return doneAttacking; } set { doneAttacking = value; } }
+
+    [SerializeField]
+    bool doneTakingHit;
+    public bool DoneTakingHit { get { return doneTakingHit; } set { doneTakingHit = value; } }
+
+    [SerializeField]
+    bool dying;
+    public bool Dying { get { return dying; } set { dying = value; } }
+
+    public event Action OnCombatStateChange;
+    float combatTimeout = 3.2f;
+    Timer CombatTimeoutTimer;
+
+    private void Start()
     {
-        Actor = a;
+        Actor = GetComponent<Actor>();
+
+        Equip(GetComponentInChildren<Weapon>(), 0);
+
+        stats.Health = stats.BaseHealth;
+
+        CombatTimeoutTimer = new Timer(combatTimeout);
+        CombatTimeoutTimer.TimerEvent += ExitCombat;
+    }
+
+    private void LateUpdate()
+    {
+        if (DoneAttacking)
+            DoneAttacking = false;
+
+        if (DoneTakingHit)
+            DoneTakingHit = true;
     }
 
     public void Attack()
     {
-        if (Actor.AnimManager.State != ActorState.ATTACKING)
-            Actor.AnimManager.SetState(ActorState.ATTACKING);
+        if (!EnterCombat())
+            CombatTimeoutTimer.Refresh();
+
+        Actor.AnimManager.SetState(ActorState.ATTACKING);
     }
 
-    float CalculateDamage()
+    public void TakeDamage(float damage)
     {
-        return 0f;
+        if (!EnterCombat())
+            CombatTimeoutTimer.Refresh();
+
+        Actor.AnimManager.SetState(ActorState.HIT);
+
+        stats.Health -= damage;
+        if (stats.Health <= 0)
+        {
+            Actor.AnimManager.SetState(ActorState.DYING);
+        }
     }
 
-    public void Equip(Item __item, int __slot)
+    public void DamageOnHit(Actor target)
+    {
+        if (!EnterCombat())
+            CombatTimeoutTimer.Refresh();
+
+        var d = CalculateDamage();
+        target.CombatController.TakeDamage(d);
+
+        Actor.AnimManager.SetState(ActorState.IDLE);
+    }
+
+    public float CalculateDamage()
+    {
+        return Equipment.LeftH.Damage;
+    }
+
+    public void Equip(Weapon __item, int __slot)
     {
         switch (__slot)
         {
             case 0:
-                Equipment = new Equipment(__item, Equipment.RightH, Equipment.Armor);
+                Equipment = new Equipment(__item, Equipment.RightH);
+                Equipment.LeftH.OnWeaponHit += DamageOnHit;
                 break;
 
             case 1:
-                Equipment = new Equipment(Equipment.LeftH, __item, Equipment.Armor);
-                break;
-
-            case 2:
-                Equipment = new Equipment(Equipment.LeftH, Equipment.RightH, __item);
+                Equipment = new Equipment(Equipment.LeftH, __item);
+                Equipment.RightH.OnWeaponHit += DamageOnHit;
                 break;
         }
+    }
+
+    bool EnterCombat()
+    {
+        if (!InCombat)
+        {
+            InCombat = true;
+            var h = CombatTimeoutTimer.Activate();
+            Actor.coroutines.Add(h);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void ExitCombat()
+    {
+        if (InCombat)
+            InCombat = false;
     }
 
 }

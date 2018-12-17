@@ -7,8 +7,10 @@ namespace SoulsEngine.Utility.Animation
         IDLE,
         RUNNING,
         JUMPING,
+        DASHING,
         ATTACKING,
-        DASHING
+        HIT,
+        DYING
     }
 
     public class AnimationUtility

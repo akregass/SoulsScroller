@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using SoulsEngine.Core.Combat;
 
 namespace SoulsEngine.Utility.Combat
 {
@@ -18,28 +18,11 @@ namespace SoulsEngine.Utility.Combat
         }
 
         [SerializeField]
-        float _baseStamina;
-        public float BaseStamina
-        {
-            get { return _baseStamina; }
-            set { _baseStamina = value; }
-        }
-
-
-        [SerializeField]
         float _health;
         public float Health
         {
             get { return _health; }
             set { _health = value; }
-        }
-
-        [SerializeField]
-        float _stamina;
-        public float Stamina
-        {
-            get { return _stamina; }
-            set { _stamina = value; }
         }
 
         [SerializeField]
@@ -49,24 +32,6 @@ namespace SoulsEngine.Utility.Combat
             get { return _moveSpeed; }
             set { _moveSpeed = value; }
         }
-
-
-        [SerializeField]
-        float _vitality;
-        public float Vitality
-        {
-            get { return _vitality; }
-            set { _vitality = value; }
-        }
-
-        [SerializeField]
-        float _endurance;
-        public float Endurance
-        {
-            get { return _endurance; }
-            set { _endurance = value; }
-        }
-
     }
 
     public struct StatusEffect
@@ -117,35 +82,39 @@ namespace SoulsEngine.Utility.Combat
     #endregion
 
     #region EQUIPMENT
+    
+    [System.Serializable]
+    public enum WeaponType
+    {
+        SWORD,
+        AXE,
+        SPEAR,
+        HAMMER
+    }
 
+    [System.Serializable]
     public struct Equipment
     {
-        private Item _leftH;
-        public Item LeftH
+        [SerializeField]
+        private Weapon _leftH;
+        public Weapon LeftH
         {
             get { return _leftH; }
             set { _leftH = value; }
         }
 
-        private Item _rightH;
-        public Item RightH
+        [SerializeField]
+        private Weapon _rightH;
+        public Weapon RightH
         {
             get { return _rightH; }
             set { _rightH = value; }
         }
 
-        private Item _armor;
-        public Item Armor
-        {
-            get { return _armor; }
-            set { _armor = value; }
-        }
-
-        public Equipment(Item __leftH, Item __rightH, Item __armor)
+        public Equipment(Weapon __leftH, Weapon __rightH)
         {
             _leftH = __leftH;
             _rightH = __rightH;
-            _armor = __armor;
         }
 
     }

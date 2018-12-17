@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class DeathBehavior : StateMachineBehaviour {
-
-    public override void OnStateExit(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
+public class DeathBehavior : StateMachineBehaviour
+{
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
     {
         var actor = animator.GetComponent<Actor>();
-        actor.Death();
+        actor.Death(3);
     }
 }

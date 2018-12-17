@@ -15,31 +15,27 @@ public class Actor : MonoBehaviour
     public AnimationManager AnimManager { get; set; }
     public CombatController CombatController { get; set; }
 
-    [SerializeField]
-    private Stats _stats;
-    public Stats Stats
-    {
-        get { return _stats; }
-        set { _stats = Stats; }
-    }
-
-    protected Controller Controller { get; set; }
+    public Controller Controller { get; set; }
 
     public bool Invincible { get; set; }
     public bool hasControl;
     public Vector2 input;
 
+    public List<CoroutineHandle> coroutines;
+
 
     #region INITIALIZATION
 
-    protected void Awake()
+    protected virtual void Awake()
     {
-        Stats = new Stats();
-        CombatController = new CombatController(this);
         Controller = GetComponent<Controller>();
+        CombatController = GetComponent<CombatController>();
+        AnimManager = GetComponent<AnimationManager>();
+
+        coroutines = new List<CoroutineHandle>();
     }
 
-    protected void Start()
+    protected virtual void Start()
     {
         GodManager.RegisterActor(this);
     }
@@ -56,20 +52,22 @@ public class Actor : MonoBehaviour
 
     protected void OnDestroy()
     {
+        GodManager.UnsubscribeActor(this);
         GodManager.UnregisterActor(this);
     }
 
     #endregion
 
-    public virtual void Death()
+    public virtual void Death(float delay)
     {
-        Timing.RunCoroutine(_Death());
-    }
 
-    public IEnumerator<float> _Death()
-    {
-        yield return Timing.WaitForSeconds(1f);
-        Destroy(gameObject);
+        foreach (CoroutineHandle handle in coroutines)
+        {
+            Timing.KillCoroutines(handle);
+            Debug.Log("Killed " + handle);
+        }
+
+        Destroy(gameObject, delay);
     }
 
 }

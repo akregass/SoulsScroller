@@ -12,14 +12,6 @@ namespace SoulsEngine.Utility
         MISC
     }
 
-    public enum WeaponType
-    {
-        SWORD,
-        AXE,
-        SPEAR,
-        HAMMER
-    }
-
     public class ItemUtility
     {
 

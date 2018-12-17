@@ -8,16 +8,16 @@ namespace SoulsEngine.Utility.Locomotion
     public class RaycastController : MonoBehaviour
     {
 
-        public BoxCollider2D boxCollider;
-        public float skinWidth;
+        protected BoxCollider2D boxCollider;
+        public  float skinWidth;
 
-        public RaycastOrigins raycastOrigins;
-        public float raySpacingX;
-        public float raySpacingY;
+        protected RaycastOrigins raycastOrigins;
+        protected float raySpacingX;
+        protected float raySpacingY;
         public int rayCountX;
         public int rayCountY;
 
-        public void UpdateRaycastOrigins()
+        protected void UpdateRaycastOrigins()
         {
             Bounds bounds = boxCollider.bounds;
             bounds.Expand(skinWidth * -2);
@@ -28,7 +28,7 @@ namespace SoulsEngine.Utility.Locomotion
             raycastOrigins.topRight = new Vector2(bounds.max.x, bounds.max.y);
         }
 
-        public void CalculateRaySpacing()
+        protected void CalculateRaySpacing()
         {
             Bounds bounds = boxCollider.bounds;
             bounds.Expand(skinWidth * -2);

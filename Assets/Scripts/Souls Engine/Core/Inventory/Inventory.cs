@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SoulsEngine;
+using SoulsEngine.Core;
 using SoulsEngine.Utility;
 
 public class Inventory : MonoBehaviour
