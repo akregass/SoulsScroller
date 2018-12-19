@@ -24,20 +24,17 @@ public class Enemy : Actor
     public virtual void Update()
     {
         input = Vector2.zero;
-
-        if (!CombatController.InCombat)
+        Vector2 dir = (GodManager.Player.transform.position - transform.position).normalized;
+        
+        if (!CombatController.combatInfo.InCombat)
         {
-            Vector2 dir = (GodManager.Player.transform.position - transform.position).normalized;
             RaycastHit2D hit = Physics2D.Raycast(transform.position + offset, dir, AggroRange, aggroMask);
-
-            Debug.DrawRay(transform.position + offset, dir * AggroRange);
 
             if (hit)
             {
                 if (hit.transform.gameObject.tag == "Player")
                 {
-                    CombatController.InCombat = true;
-                    GodManager.Player.CombatController.InCombat = true;
+                    CombatController.EnterCombat();
                 }
             }
         }
@@ -45,6 +42,6 @@ public class Enemy : Actor
 
     public virtual void FixedUpdate()
     {
-        Controller.Move(input);
+        Controller.Move(input * Time.deltaTime);
     }
 }

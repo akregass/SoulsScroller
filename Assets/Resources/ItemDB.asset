@@ -12,16 +12,9 @@ MonoBehaviour:
   m_Name: ItemDB
   m_EditorClassIdentifier: 
   _database:
-  - _itemName: Broom Handle
-    _itemDescription: The handle of a wooden broom
-    _itemType: 0
-    _itemIcon: {fileID: 21300000, guid: d673c1ce2543140428d05dbec3e5dd4d, type: 3}
-    _itemStackSize: 1
-  - _itemName: NEW ITEM
-    _itemDescription: 
-    _itemType: 0
-    _itemIcon: {fileID: 21300000, guid: d673c1ce2543140428d05dbec3e5dd4d, type: 3}
-    _itemStackSize: 1
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   _weaponDatabase: []
   _shieldDatabase: []
   _armorDatabase: []

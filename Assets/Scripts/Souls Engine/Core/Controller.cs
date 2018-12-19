@@ -36,13 +36,14 @@ public class Controller : RaycastController
     Timer jumpGraceCooldownTimer;
     bool isJumping;
     bool isFallingFromJump;
-    bool isFalling;
+    bool isFalling = false;
     
     bool isWallSliding;
     public float wallSlideSpeed;
     public Vector2 wallJumpSpeed;
     public Vector2 wallClimbSpeed;
     public Vector2 wallJumpOffSpeed;
+    bool isWallJumping;
 
     float wallStickTime = .25f;
     float timeToWallUnstick;
@@ -65,6 +66,7 @@ public class Controller : RaycastController
 
     [Space(10f), Header("Misc"), Space(5f)]
     public int direction = 1;
+    int faceDirection = 1;
 
     private void Awake()
     {
@@ -91,10 +93,9 @@ public class Controller : RaycastController
 
     private void Update()
     {
-        if (Mathf.Sign(transform.localScale.x) != direction)
-            transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        FaceDirection(direction);
 
-        sprite.flipX = (!isWallSliding);
+        sprite.flipX = (!isWallSliding && !isWallJumping);
 
         if (collisions.below)
         {
@@ -130,7 +131,8 @@ public class Controller : RaycastController
         int wallDirection = collisions.right ? 1 : -1;
 
         //velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
-        velocity.x = targetVelocityX;
+        if(!isWallJumping)
+            velocity.x = targetVelocityX;
 
         if ((collisions.left || collisions.right) && !collisions.below)
         {
@@ -231,6 +233,9 @@ public class Controller : RaycastController
         UpdateAnimator();
 
         transform.Translate(velocity);
+
+        if (isWallJumping)
+            isWallJumping = false;
     }
 
     public void Jump(Vector2 input)
@@ -241,13 +246,15 @@ public class Controller : RaycastController
         {
             if(input.x != 0)
             {
-                velocity.x = input.x == wallDirection ? (wallClimbSpeed.x * -wallDirection) : (wallJumpSpeed.x * -wallDirection);
                 velocity.y = input.x == wallDirection ? wallClimbSpeed.y : wallJumpSpeed.y;
+                velocity.x = input.x == wallDirection ? (wallClimbSpeed.x * -wallDirection) : (wallJumpSpeed.x * -wallDirection);
+                isWallJumping = true;
             }
             else
             {
                 velocity.x = wallJumpOffSpeed.x * -wallDirection;
                 velocity.y = wallJumpOffSpeed.y;
+                isWallJumping = true;
             }
         }
         else if ((collisions.below || jumpGraceActive) && !isDashing)
@@ -343,6 +350,12 @@ public class Controller : RaycastController
 
         if (!collisions.below)
             actor.AnimManager.SetState(ActorState.JUMPING);
+    }
+
+    public void FaceDirection(int dir)
+    {
+        if (Mathf.Sign(transform.localScale.x) != dir)
+            transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
     }
     
     [System.Serializable]

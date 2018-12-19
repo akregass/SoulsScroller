@@ -109,5 +109,105 @@ namespace SoulsEngine.Utility
                 Debug.Log(message);
         }
     }
+
+    public class Heap<T> where T : IHeapItem<T>
+    {
+
+        T[] items;
+        int elementCount;
+        public int Count { get { return elementCount; }}
+
+        public Heap(int size)
+        {
+            items = new T[size];
+        }
+
+        public void Add(T item)
+        {
+            item.Index = Count;
+            items[Count] = item;
+            SortUp(item);
+            elementCount++;
+        }
+
+        public T RemoveFirst()
+        {
+            T item = items[0];
+            elementCount--;
+            items[0] = items[Count];
+            items[0].Index = 0;
+            SortDown(items[0]);
+
+            return item;
+        }
+
+        public void UpdateItem(T item)
+        {
+            SortUp(item);
+        }
+
+        public bool Contains(T item)
+        {
+            return Equals(items[item.Index], item);
+        }
+
+        public void SortUp(T item)
+        {
+            int parentIndex = (item.Index - 1) / 2;
+            T parentItem = items[parentIndex];
+
+            while (true)
+            {
+                if (item.CompareTo(parentItem) > 0)
+                    Swap(item, parentItem);
+                else
+                    break;
+
+                parentIndex = (item.Index - 1) / 2;
+                parentItem = items[parentIndex];
+            }
+        }
+
+        public void SortDown(T item)
+        {
+            int childIndexLeft = item.Index * 2 + 1;
+            int childIndexRight = item.Index * 2 + 2;
+            int swapIndex = 0;
+
+            if (childIndexLeft < Count)
+            {
+                swapIndex = childIndexLeft;
+
+                if (childIndexRight < Count)
+                {
+                    if (items[childIndexLeft].CompareTo(items[childIndexRight]) < 0)
+                        swapIndex = childIndexRight;
+                }
+
+                if (item.CompareTo(items[swapIndex]) < 0)
+                    Swap(item, items[swapIndex]);
+                else
+                    return;
+            }
+            else
+                return;
+            
+        }
+
+        public void Swap(T itemA, T itemB)
+        {
+            items[itemA.Index] = itemB;
+            items[itemB.Index] = itemA;
+
+            itemA.Index ^= itemB.Index;
+            itemB.Index ^= itemA.Index;
+            itemA.Index ^= itemB.Index;
+        }
+    }
+
+    public interface IHeapItem<T> : IComparable<T>
+    {
+        int Index { get; set; }
+    }
     
 }

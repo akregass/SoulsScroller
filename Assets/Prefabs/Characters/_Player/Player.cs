@@ -4,8 +4,8 @@ using SoulsEngine;
 
 public class Player : Actor
 {
-
-
+    bool enlarge = false;
+    
     protected override void Start ()
     {
         base.Start();

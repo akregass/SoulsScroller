@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4349463640226966}
   - component: {fileID: 114674153320835340}
+  - component: {fileID: 60405172268256952}
   m_Layer: 13
   m_Name: Weapon
   m_TagString: Untagged
@@ -42,6 +43,7 @@ GameObject:
   - component: {fileID: 114727345692693348}
   - component: {fileID: 114534413258611490}
   - component: {fileID: 114301773429559298}
+  - component: {fileID: 114350531571238374}
   m_Layer: 13
   m_Name: Bandit
   m_TagString: Enemy
@@ -69,13 +71,42 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1567066084977206}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.16, y: 1.68, z: 0}
+  m_LocalPosition: {x: -121.87, y: -70.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4349463640226966}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!60 &60405172268256952
+PolygonCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1512492496499986}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.6498928, y: 2.8989215}
+      - {x: -0.19953442, y: 1.0920773}
+      - {x: 0.9156437, y: 1.093493}
+      - {x: 1.5181646, y: 1.7759252}
+      - {x: 1.0004005, y: 2.5669465}
 --- !u!61 &61176499735983758
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -148,8 +179,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 5120
   velocity: {x: 0, y: 0, z: 0}
-  jumpHeight: 0.12
-  timeToJumpApex: 0.33
+  jumpHeight: 0.18
+  timeToJumpApex: 0.36
   jumpGracePeriod: 0.125
   jumpGraceCooldown: 3
   wallSlideSpeed: -0.05
@@ -160,6 +191,17 @@ MonoBehaviour:
   dashTime: 7
   dashCooldown: 0.8
   direction: 1
+--- !u!114 &114350531571238374
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1567066084977206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19d762d736332664c831a2349de4416f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114534413258611490
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -172,14 +214,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats:
-    _baseHealth: 10
+    _baseHealth: 20
     _health: 0
-    _moveSpeed: 8
-  _equipment:
+    _moveSpeed: 6
+  equipment:
     _leftH: {fileID: 0}
     _rightH: {fileID: 0}
   inCombat: 0
+  inRange: 0
   doneAttacking: 0
+  doneTakingHit: 0
+  dying: 0
+  combatInfo:
+    Attacking: 0
 --- !u!114 &114674153320835340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -198,6 +245,7 @@ MonoBehaviour:
   _itemStackSize: 1
   _damage: 5
   _durability: 10
+  _range: 4
 --- !u!114 &114727345692693348
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -211,7 +259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hasControl: 1
   input: {x: 0, y: 0}
-  aggroRange: 6
+  aggroRange: 8
   aggroMask:
     serializedVersion: 2
     m_Bits: 5376
@@ -229,7 +277,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 81b27177d3df66c4f9882ec9f9676195, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -251,7 +299,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 7a7c2502c80fce548b38b940ccd74462, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 3, y: 3}

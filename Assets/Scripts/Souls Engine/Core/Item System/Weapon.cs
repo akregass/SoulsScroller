@@ -24,6 +24,14 @@ namespace SoulsEngine.Core.Combat {
         }
 
         [SerializeField]
+        private int _range;
+        public int Range
+        {
+            get { return _range; }
+            set { _range = Mathf.Clamp(value, 0, Int32.MaxValue); }
+        }
+
+        [SerializeField]
         public WeaponType WeaponType { get; set; }
 
         public Weapon()
@@ -31,12 +39,13 @@ namespace SoulsEngine.Core.Combat {
 
         }
 
-        public Weapon(float __damage, int __durability, WeaponType _weaponType)
+        public Weapon(float __damage, int __durability, int __range, WeaponType __weaponType)
         {
             ItemType = ItemType.WEAPON;
-            WeaponType = _weaponType;
+            WeaponType = __weaponType;
             Damage = __damage;
             Durability = __durability;
+            Range = __range;
         }
         
         public event Action<Actor> OnWeaponHit;

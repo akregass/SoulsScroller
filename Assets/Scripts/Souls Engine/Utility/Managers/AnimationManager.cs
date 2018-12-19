@@ -13,10 +13,14 @@ namespace SoulsEngine
         ActorState state;
         public ActorState State { get { return state; } set { state = value; } }
 
+        [SerializeField]
+        bool lockStateChange = false;
         HashSet<ActorState> stateChangeQueue;
 
         int _State;
         int _InCombat;
+        int _TakingHit;
+        int _Attacking;
 
         void Start()
         {
@@ -28,24 +32,15 @@ namespace SoulsEngine
 
             _State = Animator.StringToHash("State");
             _InCombat = Animator.StringToHash("In Combat");
-
-            Actor.CombatController.OnCombatStateChange += UpdateCombatState;
+            _TakingHit = Animator.StringToHash("Taking Hit");
+            _Attacking = Animator.StringToHash("Attacking");
         }
 
         void LateUpdate()
         {
-            if (NotAttacking() && NotTakingHit() && !Actor.CombatController.Dying)
+            if (!lockStateChange)
             {
-                if (stateChangeQueue.Contains(ActorState.DYING))
-                {
-                    State = ActorState.DYING;
-                }
-                else if (stateChangeQueue.Contains(ActorState.HIT))
-                {
-                    State = ActorState.HIT;
-                    Debug.Log("hit state activated");
-                }
-                else if (stateChangeQueue.Contains(ActorState.ATTACKING))
+                if (stateChangeQueue.Contains(ActorState.ATTACKING))
                 {
                     State = ActorState.ATTACKING;
                 }
@@ -67,7 +62,16 @@ namespace SoulsEngine
                 }
             }
 
-            if(Animator.GetInteger(_State) != (int)State)
+            if (stateChangeQueue.Contains(ActorState.DYING))
+            {
+                State = ActorState.DYING;
+            }
+            else if (stateChangeQueue.Contains(ActorState.HIT))
+            {
+                State = ActorState.HIT;
+            }
+
+            if (Animator.GetInteger(_State) != (int)State)
                 UpdateAnimatorParam(_State, (int)State);
 
             stateChangeQueue.Clear();
@@ -76,11 +80,6 @@ namespace SoulsEngine
         public void SetState(ActorState _state)
         {
             stateChangeQueue.Add(_state);
-        }
-
-        public void UpdateCombatState()
-        {
-            UpdateAnimatorParam(_InCombat, Actor.CombatController.InCombat);
         }
 
         void UpdateAnimatorParam(int field, int value)
@@ -96,20 +95,6 @@ namespace SoulsEngine
         void UpdateAnimatorParam(int field, float value)
         {
             Animator.SetFloat(field, value);
-        }
-
-        bool NotAttacking()
-        {
-            return (State != ActorState.ATTACKING || (State == ActorState.ATTACKING && Actor.CombatController.DoneAttacking));
-        }
-        bool NotTakingHit()
-        {
-            return (State != ActorState.HIT || (State == ActorState.HIT && Actor.CombatController.DoneTakingHit));
-        }
-
-        void OnDestroy()
-        {
-            Actor.CombatController.OnCombatStateChange -= UpdateCombatState;
         }
     }
 }

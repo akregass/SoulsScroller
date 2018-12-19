@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using SoulsEngine;
-using SoulsEngine.Utility.Combat;
+using SoulsEngine.Core.Combat;
 using MEC;
 
 [RequireComponent(typeof(Animator))]
@@ -60,11 +60,11 @@ public class Actor : MonoBehaviour
 
     public virtual void Death(float delay)
     {
+        AnimManager.SetState(SoulsEngine.Utility.Animation.ActorState.DYING);
 
         foreach (CoroutineHandle handle in coroutines)
         {
             Timing.KillCoroutines(handle);
-            Debug.Log("Killed " + handle);
         }
 
         Destroy(gameObject, delay);
